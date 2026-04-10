@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VC4 Expert | Juanseled</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f7fb;--card:#fff;--card2:#eef1f7;--a:#0070c9;--a2:#6d28d9;--a3:#059669;--w:#d97706;--r:#dc2626;--t:#111827;--s:#4b5563;--b:#cbd5e1}
+body{font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--t);font-size:14px}
+.hero{background:linear-gradient(135deg,#059669,#0070c9);padding:28px 16px 20px;text-align:center}
+.hero h1{font-size:clamp(22px,5vw,38px);font-weight:900;color:#fff;margin-bottom:4px}
+.hero p{color:rgba(255,255,255,.85);font-size:12px;margin-bottom:16px}
+.stats{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.stat{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:10px;padding:8px 14px;text-align:center}
+.sv{font-size:18px;font-weight:900;color:#fff}
+.sl{font-size:9px;color:rgba(255,255,255,.75);letter-spacing:1px}
+nav{display:flex;overflow-x:auto;gap:6px;padding:10px 12px;background:#fff;border-bottom:2px solid var(--b);position:sticky;top:0;z-index:100;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+.nb{flex-shrink:0;padding:8px 16px;border-radius:20px;border:1px solid var(--b);background:var(--card2);color:var(--s);font-size:12px;cursor:pointer;transition:.2s;white-space:nowrap;font-weight:600}
+.nb.on{background:var(--a);border-color:var(--a);color:#fff}
+.sec{display:none;padding:14px;max-width:580px;margin:0 auto}
+.sec.on{display:block}
+.card{background:var(--card);border:1px solid var(--b);border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.06)}
+.ch{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ci{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.ct{font-size:14px;font-weight:800;color:var(--t)}
+.cs{font-size:11px;color:var(--s)}
+.row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b);font-size:12px;gap:10px}
+.row:last-child{border:none}
+.rl{color:var(--s)}
+.rv{font-weight:700;color:var(--a);text-align:right;max-width:60%}
+.acc{background:var(--card);border:1px solid var(--b);border-radius:12px;margin-bottom:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.ah{padding:13px 16px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--card2);border-left:4px solid var(--a)}
+.ah h3{font-size:13px;font-weight:700;color:var(--t);display:flex;align-items:center;gap:8px}
+.ar{transition:transform .3s;color:var(--s);font-size:11px}
+.acc.op .ar{transform:rotate(180deg)}
+.ab{display:none;padding:12px 16px;background:var(--card)}
+.acc.op .ab{display:block}
+.tip{display:flex;gap:10px;padding:10px 12px;background:#f0f7ff;border-radius:10px;margin-bottom:8px;border-left:3px solid var(--a3)}
+.ti{font-size:18px;flex-shrink:0}
+.tt{font-size:12px;color:var(--s);line-height:1.6}
+.tt strong{color:var(--t)}
+.warn{background:#fff7ed;padding:10px;border-radius:8px;font-size:12px;color:#92400e;border-left:3px solid var(--w);margin-top:8px}
+.err{background:#fef2f2;padding:10px;border-radius:8px;font-size:12px;color:#991b1b;border-left:3px solid var(--r);margin-top:8px}
+.chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;margin:3px 2px}
+.cb{background:#dbeafe;color:#1d4ed8;border:1px solid #bfdbfe}
+.cp{background:#ede9fe;color:#6d28d9;border:1px solid #ddd6fe}
+.cg{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+.cy{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.cr{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+.sbox{position:relative;margin-bottom:14px}
+.sbox input{width:100%;padding:12px 16px 12px 40px;background:var(--card);border:1px solid var(--b);border-radius:12px;color:var(--t);font-size:13px;outline:none}
+.sbox input:focus{border-color:var(--a)}
+.sbox::before{content:"🔍";position:absolute;left:14px;top:50%;transform:translateY(-50%)}
+.sr{background:var(--card);border:1px solid var(--b);border-radius:10px;padding:12px;margin-bottom:8px}
+.sr h4{font-size:13px;font-weight:700;color:var(--a);margin-bottom:4px}
+.sr p{font-size:11px;color:var(--s);line-height:1.5}
+.qo{padding:12px;background:var(--card2);border:1px solid var(--b);border-radius:10px;cursor:pointer;font-size:13px;margin-bottom:8px;text-align:left;width:100%;transition:.2s;font-family:inherit}
+.qo:hover{border-color:var(--a);background:#e8f0fe}
+.qo.ok{background:#d1fae5;border-color:var(--a3);color:#065f46}
+.qo.no{background:#fee2e2;border-color:var(--r);color:#991b1b}
+.qbar{height:6px;background:var(--b);border-radius:3px;margin-bottom:14px;overflow:hidden}
+.qbf{height:100%;background:linear-gradient(90deg,var(--a3),var(--a));border-radius:3px;transition:width .5s}
+.qfb{font-size:11px;color:var(--s);margin-top:8px;padding:8px 12px;background:var(--card2);border-radius:8px;border-left:3px solid var(--a);display:none}
+.qfb.show{display:block}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.mode-card{background:var(--card2);border:1px solid var(--b);border-radius:10px;padding:10px;text-align:center}
+.mode-card.best{border-color:var(--a3);background:#f0fdf4}
+.mode-name{font-size:11px;font-weight:800;color:var(--a);margin-bottom:4px}
+.mode-lbl{font-size:9px;color:var(--s)}
+.led-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--b);font-size:12px}
+.led-row:last-child{border:none}
+.led{width:14px;height:14px;border-radius:50%;flex-shrink:0;border:1px solid rgba(0,0,0,.1)}
+.led.on{background:#0070c9;box-shadow:0 0 8px #0070c9}
+.led.bl{background:#0070c9;animation:bl 1s infinite}
+.led.off{background:#cbd5e1}
+@keyframes bl{50%{opacity:.2}}
+.btn{display:inline-block;padding:6px 12px;background:var(--card2);border:1px solid var(--b);border-radius:8px;font-size:10px;font-weight:700;color:var(--s);margin:2px}
+.tbl{background:var(--card2);border-radius:10px;overflow:hidden;border:1px solid var(--b);margin-top:8px}
+.tbl-h{display:grid;background:var(--a);color:#fff;padding:10px;font-size:11px;font-weight:700;text-align:center;gap:6px}
+.tbl-r{display:grid;padding:10px;font-size:11px;text-align:center;border-bottom:1px solid var(--b);gap:6px;align-items:center}
+.tbl-r:last-child{border:none}
+footer{text-align:center;padding:24px 16px;color:var(--s);font-size:11px;border-top:1px solid var(--b);margin-top:20px}
+footer strong{color:var(--a)}
+.qbox{background:linear-gradient(135deg,#ede9fe,#dbeafe);border:1px solid #c4b5fd;border-radius:12px;padding:12px;margin-bottom:10px;position:relative}
+.qbox::before{content:"💬 CONSULTA";position:absolute;top:-8px;left:12px;background:var(--a2);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;letter-spacing:1px}
+.qbox p{font-size:12px;color:var(--t);line-height:1.6;font-style:italic;margin-top:4px}
+.abox{background:#f0fdf4;border:1px solid #a7f3d0;border-radius:12px;padding:12px;position:relative;margin-bottom:12px}
+.abox::before{content:"✅ RESPUESTA";position:absolute;top:-8px;left:12px;background:var(--a3);color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:10px;letter-spacing:1px}
+.calc{background:#fff;border:1px dashed var(--a);border-radius:8px;padding:10px;margin:8px 0;font-size:11px;font-family:monospace}
+.calc strong{color:var(--a);font-family:"Segoe UI",Arial,sans-serif}
+.steps{counter-reset:s;margin-top:8px}
+.step{counter-increment:s;display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed var(--b);font-size:12px;color:var(--s);line-height:1.5}
+.step:last-child{border:none}
+.step::before{content:counter(s);background:var(--a3);color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;flex-shrink:0}
+.step strong{color:var(--t)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<p style="color:rgba(255,255,255,.7);font-size:10px;letter-spacing:2px;margin-bottom:6px">⚡ JUANSELED · NOVASTAR EXPERT</p>
+<h1>VC4</h1>
+<p>LED Video Controller · La guía completa para técnicos e instaladores</p>
+<div class="stats">
+<div class="stat"><div class="sv">2.6M</div><div class="sl">PIXELES MAX</div></div>
+<div class="stat"><div class="sv">4</div><div class="sl">PUERTOS RJ45</div></div>
+<div class="stat"><div class="sv">5</div><div class="sl">ENTRADAS</div></div>
+<div class="stat"><div class="sv">25W</div><div class="sl">CONSUMO</div></div>
+</div>
+</div>
+
+<nav id="nav">
+<button class="nb on" data-t="inicio">🏠 Inicio</button>
+<button class="nb" data-t="start">🚀 Primeros pasos</button>
+<button class="nb" data-t="casos">💼 Casos reales</button>
+<button class="nb" data-t="entradas">🔌 Entradas</button>
+<button class="nb" data-t="salidas">📡 Salidas</button>
+<button class="nb" data-t="panel">🎛️ Panel frontal</button>
+<button class="nb" data-t="lcd">📺 Pantalla LCD</button>
+<button class="nb" data-t="zoom">🔍 Modos zoom</button>
+<button class="nb" data-t="usb">💾 USB playback</button>
+<button class="nb" data-t="fix">🔧 No funciona</button>
+<button class="nb" data-t="specs">📋 Specs</button>
+<button class="nb" data-t="buscar">🔎 Buscar</button>
+<button class="nb" data-t="quiz">🎯 Quiz</button>
+</nav>
+
+<!-- INICIO -->
+<div class="sec on" id="s-inicio">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">📺</div><div><div class="ct">¿Qué es el VC4?</div><div class="cs">NovaStar · LED Video Controller</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.7">El VC4 es un controlador de video dos-en-uno puramente por hardware con operación simple y funciones ricas. Integra tecnología profesional de control de pantallas con potentes capacidades de procesamiento de video y soporta entradas HD multi-tipo. Equipo compacto 1U para instalaciones fijas — ideal para shoppings, hoteles, exhibiciones y estudios de TV.</p>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">⚡</div><div><div class="ct">Lo que hace fuerte al VC4</div></div></div>
+<div class="row"><span class="rl">Carga máxima</span><span class="rv">2.600.000 px</span></div>
+<div class="row"><span class="rl">Ancho máximo</span><span class="rv">3840 px</span></div>
+<div class="row"><span class="rl">Alto máximo</span><span class="rv">1920 px</span></div>
+<div class="row"><span class="rl">Salidas</span><span class="rv">4× RJ45 Gigabit</span></div>
+<div class="row"><span class="rl">Entradas video</span><span class="rv">DVI · HDMI · VGA · CVBS · USB</span></div>
+<div class="row"><span class="rl">Audio</span><span class="rv">Independiente IN/OUT</span></div>
+<div class="row"><span class="rl">Control central</span><span class="rv">RS232</span></div>
+<div class="row"><span class="rl">Presets</span><span class="rv">6 escenas guardables</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#ede9fe">📍</div><div><div class="ct">¿Dónde se usa?</div></div></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px">
+<span class="chip cg">🏬 Shoppings</span>
+<span class="chip cb">🏨 Hoteles</span>
+<span class="chip cp">🎪 Exhibiciones</span>
+<span class="chip cy">📺 Estudios TV</span>
+<span class="chip cg">🏛️ Instalaciones fijas</span>
+<span class="chip cb">🏢 Lobbies corporativos</span>
+</div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#fef3c7">🎯</div><div><div class="ct">Lo que NO es</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.7">El VC4 <strong>no es</strong> para rental de alta gama ni broadcast de gran escala. <strong>No tiene</strong> SDI, fibra, ni capas múltiples avanzadas. Es un equipo de instalación fija pensado para hacer las cosas básicas muy bien y con cero complicación: una entrada, una pantalla LED, listo.</p>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">🎮</div><div><div class="ct">Cómo se controla</div></div></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px">
+<span class="chip cb">🎛️ Knob frontal</span>
+<span class="chip cg">🔘 Botones directos</span>
+<span class="chip cp">💻 USB Type-B (PC)</span>
+<span class="chip cy">🔗 RS232 central</span>
+</div>
+<div class="tip" style="margin-top:10px"><div class="ti">💡</div><div class="tt"><strong>Filosofía VC4:</strong> el sistema entero se configura con un knob y un botón. Sin software obligatorio, sin curva de aprendizaje.</div></div>
+</div>
+</div>
+
+<!-- PRIMEROS PASOS -->
+<div class="sec" id="s-start">
+<div class="card" style="border-color:var(--a3)">
+<div class="ch"><div class="ci" style="background:#d1fae5">🚀</div><div><div class="ct">Primeros pasos con el VC4</div><div class="cs">De la caja a la pantalla encendida</div></div></div>
+</div>
+
+<div class="acc op"><div class="ah"><h3><span style="background:var(--a);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900">1</span>Verificar accesorios</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">
+<span class="chip cg">✓ 1× Cable de poder</span>
+<span class="chip cg">✓ 1× Cable USB</span>
+<span class="chip cg">✓ 1× Cable DVI</span>
+<span class="chip cg">✓ 1× Cable HDMI</span>
+</div>
+<div class="tip"><div class="ti">📦</div><div class="tt">Vienen 1 cable de poder, 1 cable USB, 1 cable DVI y 1 cable HDMI. El equipo pesa 2.82 kg y va en caja de 565×328×88 mm.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3><span style="background:var(--a);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900">2</span>Montar en rack</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Tamaño</span><span class="rv">1U · 482.6 mm rack</span></div>
+<div class="row"><span class="rl">Profundidad</span><span class="rv">250 mm</span></div>
+<div class="row"><span class="rl">Alto</span><span class="rv">50 mm</span></div>
+<div class="tip" style="margin-top:10px"><div class="ti">🔧</div><div class="tt">Es un equipo 1U estándar — entra en cualquier rack de 19". Dejá 1U de aire arriba y abajo para ventilación.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3><span style="background:var(--a);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900">3</span>Conectar la fuente de video</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">PC moderna</span><span class="rv">DVI o HDMI · 1080@60</span></div>
+<div class="row"><span class="rl">PC vieja / proyector</span><span class="rv">VGA · 1080@60</span></div>
+<div class="row"><span class="rl">Cámara / DVD viejo</span><span class="rv">CVBS · PAL/NTSC</span></div>
+<div class="row"><span class="rl">Sin PC (cartelería)</span><span class="rv">USB pendrive</span></div>
+<div class="tip" style="margin-top:10px"><div class="ti">🎯</div><div class="tt"><strong>Botón directo:</strong> presionás HDMI / DVI / VGA / USB / EXT / CVBS y listo. Cambio instantáneo de fuente.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3><span style="background:var(--a);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900">4</span>Conectar la pantalla LED</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Cable</span><span class="rv">RJ45 (Cat5e o mejor)</span></div>
+<div class="row"><span class="rl">Puertos</span><span class="rv">4× Gigabit Ethernet</span></div>
+<div class="row"><span class="rl">Carga total</span><span class="rv">2.600.000 px máx</span></div>
+<div class="row"><span class="rl">Ancho × alto máx</span><span class="rv">3840 × 1920</span></div>
+<div class="tip" style="margin-top:10px"><div class="ti">⚡</div><div class="tt">Los 4 puertos suman hasta 2.6M px. Se conectan a las receiving cards de la pantalla en cascada.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3><span style="background:var(--a);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900">5</span>Encender y ajustar</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Power</span><span class="rv">Switch frontal ON</span></div>
+<div class="row"><span class="rl">Seleccionar fuente</span><span class="rv">Botón directo</span></div>
+<div class="row"><span class="rl">Ajustar pantalla</span><span class="rv">Knob → menú</span></div>
+<div class="row"><span class="rl">Brillo / Gamma</span><span class="rv">Menú → Screen</span></div>
+<div class="tip" style="margin-top:10px"><div class="ti">✨</div><div class="tt"><strong>Tip pro:</strong> apenas conectás la pantalla, presioná <strong>SCALE</strong> y la imagen se ajusta full screen automáticamente. Un solo botón.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3><span style="background:var(--a);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900">6</span>Guardar como preset</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Presets disponibles</span><span class="rv">6 escenas</span></div>
+<div class="row"><span class="rl">Cómo guardar</span><span class="rv">Menú → Save Scene</span></div>
+<div class="row"><span class="rl">Cómo cargar</span><span class="rv">Menú → Load Scene</span></div>
+<div class="tip" style="margin-top:10px"><div class="ti">💾</div><div class="tt">Guardá tus 6 configuraciones favoritas (HDMI full, VGA modo ventana, CVBS auto, etc.) y recuperalas con un par de clicks del knob.</div></div>
+</div></div>
+</div>
+
+<!-- CASOS REALES -->
+<div class="sec" id="s-casos">
+<div class="card" style="border-color:var(--a2)">
+<div class="ch"><div class="ci" style="background:#ede9fe">💼</div><div><div class="ct">Casos reales</div><div class="cs">Consultas que llegan todos los días</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.7">Ejemplos prácticos sacados de instalaciones reales. Cada caso tiene la consulta tal como llega y el paso a paso de cómo resolverla con el VC4.</p>
+</div>
+
+<!-- CASO 1: P1.8 con pendrive -->
+<div class="acc op"><div class="ah"><h3>🎯 Caso 1 — Pantalla P1.8 con gabinetes 64×48 · solo pendrive</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="qbox">
+<p>"Tengo una pantalla pitch 1.8 con gabinetes de 64×48. Solo cuento con un pendrive para mostrar contenido. ¿Cómo la configuro con el VC4?"</p>
+</div>
+<div class="abox">
+<strong style="font-size:12px;color:var(--t)">Primero el cálculo de píxeles:</strong>
+<div class="calc">
+Cada gabinete: <strong>64 × 48 = 3.072 px</strong><br>
+Necesitás saber cuántos gabinetes tenés en alto y ancho.<br><br>
+<strong>Ejemplo típico: 6 ancho × 3 alto</strong><br>
+Píxeles ancho: 6 × 64 = <strong>384 px</strong><br>
+Píxeles alto:  3 × 48 = <strong>144 px</strong><br>
+Total: 384 × 144 = <strong>55.296 px</strong> ✅
+</div>
+<div class="tip"><div class="ti">✅</div><div class="tt"><strong>Buenas noticias:</strong> 55 mil píxeles está MUY por debajo de los 2.6M del VC4. Entra cómodo en 1 solo puerto RJ45. Sobra capacidad.</div></div>
+
+<strong style="font-size:12px;color:var(--t);display:block;margin-top:12px">Configuración paso a paso:</strong>
+<div class="steps">
+<div class="step"><div><strong>Reformatear el pendrive a NTFS o FAT32.</strong> Si es exFAT (típico en USBs nuevos de 64GB+) el VC4 NO lo lee. Hacé clic derecho → Formatear → NTFS.</div></div>
+<div class="step"><div><strong>Preparar el contenido al tamaño exacto: 384×144 px.</strong> Si tus videos/imágenes son de otro tamaño van a salir distorsionados o con bordes. Usá Photoshop, Canva o After Effects para exportar a esa resolución exacta.</div></div>
+<div class="step"><div><strong>Formatos válidos:</strong> imágenes en jpg/png/bmp · video en H.264 o H.265 a máx 1080p@30fps. Copiá los archivos a la raíz del pendrive.</div></div>
+<div class="step"><div><strong>Conectar la pantalla LED al puerto RJ45 del VC4.</strong> Como son solo 55K px usá el Puerto 1. Cable Cat5e desde OUTPUT 1 del VC4 al primer gabinete, después en cascada gabinete a gabinete.</div></div>
+<div class="step"><div><strong>Cargar el Screen Configuration en las receiving cards.</strong> Esto se hace una sola vez con NovaLCT vía USB Type-B desde una PC. Mapeás los 18 gabinetes en una grilla 6×3. Si la pantalla ya viene mapeada de fábrica, salteá este paso.</div></div>
+<div class="step"><div><strong>Insertar el pendrive en el USB frontal del VC4.</strong></div></div>
+<div class="step"><div><strong>Presionar el botón USB del frente.</strong> El VC4 lee el pendrive y lista los archivos en la LCD.</div></div>
+<div class="step"><div><strong>Girar el knob para elegir el archivo, presionar para reproducir.</strong> Botón HDMI = play/pausa, DVI = anterior, VGA = siguiente.</div></div>
+<div class="step"><div><strong>Presionar SCALE.</strong> Ajusta automáticamente la salida a tu pantalla 384×144. Si el contenido ya está en esa resolución, va a quedar 1:1 perfecto.</div></div>
+<div class="step"><div><strong>Activar loop list</strong> desde el menú del knob para que reproduzca todos los archivos en bucle infinito. Listo, cartelería 24/7 sin PC.</div></div>
+</div>
+<div class="warn" style="margin-top:10px">⚠️ <strong>Si la pantalla no enciende:</strong> revisá que las receiving cards tengan Screen Configuration. Sin eso, el VC4 manda la señal pero los gabinetes no saben dónde ubicar cada píxel.</div>
+</div>
+</div></div>
+
+<!-- CASO 2: cálculo de píxeles -->
+<div class="acc"><div class="ah"><h3>📐 Caso 2 — ¿Mi pantalla entra en el VC4?</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="qbox">
+<p>"Me ofrecieron un VC4 de segunda mano. Tengo una pantalla de 8 gabinetes de ancho × 4 de alto, cada gabinete 128×128. ¿Me alcanza?"</p>
+</div>
+<div class="abox">
+<div class="calc">
+Píxeles ancho: 8 × 128 = <strong>1.024 px</strong><br>
+Píxeles alto:  4 × 128 = <strong>512 px</strong><br>
+Total: 1024 × 512 = <strong>524.288 px</strong> ✅<br><br>
+Capacidad VC4: <strong>2.600.000 px</strong><br>
+Uso: 524K / 2.6M = <strong>20%</strong> 🟢
+</div>
+<div class="tip"><div class="ti">✅</div><div class="tt"><strong>Te sobra muchísimo.</strong> Estás usando solo el 20% de la capacidad del VC4. Te queda margen para agrandar la pantalla al doble o más.</div></div>
+<div class="tip"><div class="ti">🧮</div><div class="tt"><strong>Regla rápida:</strong> el VC4 carga hasta <strong>3840 px de ancho</strong> y <strong>1920 px de alto</strong>. Si tu pantalla está dentro de esos dos límites Y la suma total no supera 2.6M, entra.</div></div>
+<div class="warn" style="margin-top:8px">⚠️ <strong>Cuándo NO entra:</strong> si tu pantalla es más ancha que 3840 px (ej. 4000×500), no importa que el total sea bajo, el VC4 no la maneja. Necesitás un controlador más grande tipo MCTRL4K o VX2000 Pro.</div>
+</div>
+</div></div>
+
+<!-- CASO 3: La PC no se ve -->
+<div class="acc"><div class="ah"><h3>🖥️ Caso 3 — Conecté la PC por HDMI y no se ve nada</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="qbox">
+<p>"Conecté mi notebook nueva al VC4 por HDMI. La pantalla LED queda en negro pero el botón HDMI está parpadeando. ¿Qué pasa?"</p>
+</div>
+<div class="abox">
+<div class="tip"><div class="ti">🔍</div><div class="tt"><strong>Botón parpadeando = el VC4 no detecta señal válida.</strong> En el 95% de los casos es porque la notebook está mandando 4K, 60fps en 4:2:0 o algún formato que el VC4 (HDMI 1.3) no entiende.</div></div>
+
+<strong style="font-size:12px;color:var(--t);display:block;margin-top:8px">Solución:</strong>
+<div class="steps">
+<div class="step"><div><strong>Ir al panel de control de la GPU</strong> (NVIDIA Control Panel, AMD Radeon Settings o Configuración de pantalla de Windows).</div></div>
+<div class="step"><div><strong>Cambiar la resolución de salida a 1920×1080.</strong></div></div>
+<div class="step"><div><strong>Forzar 60 Hz</strong> (no 120, no 144, no variable refresh rate).</div></div>
+<div class="step"><div><strong>Forzar formato RGB 4:4:4 · 8-bit.</strong> En NVIDIA: Output color format → RGB. Output color depth → 8 bpc. Output dynamic range → Full.</div></div>
+<div class="step"><div><strong>Desactivar HDR</strong> si está activo. El VC4 no soporta HDR.</div></div>
+<div class="step"><div><strong>Volver a presionar HDMI en el VC4.</strong> El botón debería pasar a fijo (azul) y la pantalla mostrar la imagen.</div></div>
+</div>
+<div class="warn" style="margin-top:10px">⚠️ Si igual no anda, probá DVI en vez de HDMI. A veces el handshake HDCP de HDMI 1.3 con notebooks modernas falla y DVI funciona a la primera.</div>
+</div>
+</div></div>
+
+<!-- CASO 4: Hot backup banco -->
+<div class="acc"><div class="ah"><h3>🛡️ Caso 4 — Pantalla crítica que no puede quedar en negro</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="qbox">
+<p>"Tengo una pantalla LED en el lobby de un banco. Si se queda en negro me matan. ¿Cómo configuro el VC4 para que tenga respaldo?"</p>
+</div>
+<div class="abox">
+<div class="tip"><div class="ti">🛡️</div><div class="tt"><strong>El VC4 tiene hot backup en los puertos RJ45.</strong> Configurás un puerto como principal y otro como backup. Si el principal falla (cable cortado, switch caído), el backup toma el control instantáneamente sin que la pantalla parpadee.</div></div>
+
+<strong style="font-size:12px;color:var(--t);display:block;margin-top:8px">Setup recomendado para el banco:</strong>
+<div class="steps">
+<div class="step"><div><strong>Puerto 1 → ruta principal a la pantalla.</strong> Cable Cat6 directo del OUTPUT 1 a la primera receiving card.</div></div>
+<div class="step"><div><strong>Puerto 2 → ruta de backup.</strong> Otro cable Cat6, distinto recorrido físico (por otro lado del techo si se puede), llegando al mismo punto de la pantalla.</div></div>
+<div class="step"><div><strong>Configurar Puerto 2 como backup del Puerto 1</strong> en el menú del VC4 (knob → Hot Backup → asignar par primary/backup).</div></div>
+<div class="step"><div><strong>Verificar en la LCD del VC4</strong> que aparezca el ícono de backup en el puerto 2.</div></div>
+<div class="step"><div><strong>Probar el failover:</strong> desconectá el cable del Puerto 1 a propósito. La pantalla NO debe parpadear, sigue mostrando contenido por el Puerto 2.</div></div>
+</div>
+<div class="tip" style="margin-top:8px"><div class="ti">💡</div><div class="tt"><strong>Bonus para criticidad máxima:</strong> guardá la configuración como Preset 1. Si alguien toca algo por accidente, recuperás todo en 2 clicks del knob.</div></div>
+</div>
+</div></div>
+
+<!-- CASO 5: Cartelería sin PC -->
+<div class="acc"><div class="ah"><h3>🏬 Caso 5 — Cartelería de shopping 24/7 sin computadora</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="qbox">
+<p>"El cliente quiere una pantalla LED en la entrada del shopping reproduciendo 5 publicidades en loop, todo el día. No quiere que haya una PC porque se cuelga y nadie sabe reiniciarla. ¿El VC4 me sirve?"</p>
+</div>
+<div class="abox">
+<div class="tip"><div class="ti">✅</div><div class="tt"><strong>Caso ideal para el VC4.</strong> Es exactamente para lo que está pensado: instalación fija, contenido fijo, cero mantenimiento.</div></div>
+
+<strong style="font-size:12px;color:var(--t);display:block;margin-top:8px">Setup completo:</strong>
+<div class="steps">
+<div class="step"><div><strong>Pendrive de 32 GB FAT32</strong> (no exFAT). Capacidad sobrada para 5 videos publicitarios.</div></div>
+<div class="step"><div><strong>Exportar las 5 publicidades en H.264, 1080p o menos, 30 fps.</strong> Nombrarlas 01.mp4, 02.mp4, 03.mp4, 04.mp4, 05.mp4 para que reproduzcan en orden.</div></div>
+<div class="step"><div><strong>Conectar todo:</strong> alimentación AC al VC4, RJ45 del Puerto 1 a la pantalla, pendrive en el USB frontal.</div></div>
+<div class="step"><div><strong>Encender el VC4, presionar USB.</strong> El VC4 detecta el pendrive y lista los archivos.</div></div>
+<div class="step"><div><strong>Activar Loop List</strong> en el menú (knob). El ícono de loop list aparece en la LCD.</div></div>
+<div class="step"><div><strong>Presionar SCALE</strong> para que las publicidades llenen toda la pantalla.</div></div>
+<div class="step"><div><strong>Guardar como Preset 1.</strong> Así, si alguien apaga el equipo de noche, al encender vuelve solo a la configuración correcta.</div></div>
+<div class="step"><div><strong>Bloquear el panel frontal</strong> (mantener knob presionado). Aparece el candado en la LCD. Nadie del shopping puede tocar nada por error.</div></div>
+</div>
+<div class="tip" style="margin-top:10px"><div class="ti">🎯</div><div class="tt"><strong>Resultado:</strong> el VC4 enciende, lee el pendrive, reproduce las 5 publicidades en loop infinito, sin PC, sin red, sin software. Si se corta la luz, al volver arranca solo y sigue desde el principio.</div></div>
+<div class="warn" style="margin-top:8px">⚠️ <strong>Para cambiar el contenido:</strong> el técnico va con un pendrive nuevo, lo mete y ya está. Bloqueo del panel se quita con el mismo gesto del knob.</div>
+</div>
+</div></div>
+
+<!-- CASO 6: Cliente con cámara CVBS vieja -->
+<div class="acc"><div class="ah"><h3>📼 Caso 6 — Cliente con cámara analógica vieja</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="qbox">
+<p>"Iglesia me pide pasar la imagen de su cámara antigua a una pantalla LED para que la vean atrás. La cámara solo tiene salida amarilla RCA. ¿Funciona con VC4?"</p>
+</div>
+<div class="abox">
+<div class="tip"><div class="ti">✅</div><div class="tt"><strong>Sí, perfecto.</strong> El conector amarillo RCA es CVBS (compuesto). El VC4 tiene una entrada CVBS en BNC.</div></div>
+
+<div class="steps">
+<div class="step"><div><strong>Adaptador RCA hembra → BNC macho.</strong> Costo: $1. Lo conseguís en cualquier casa de electrónica.</div></div>
+<div class="step"><div><strong>Conectar la cámara al VC4 vía CVBS.</strong></div></div>
+<div class="step"><div><strong>Presionar el botón CVBS del frente.</strong> El VC4 detecta automáticamente PAL o NTSC.</div></div>
+<div class="step"><div><strong>Presionar SCALE</strong> para llenar la pantalla LED.</div></div>
+</div>
+<div class="warn" style="margin-top:8px">⚠️ <strong>La calidad va a ser baja</strong> — CVBS analógico es 480 líneas como mucho. Cuando lo estirás a una pantalla LED grande se nota. Pero para una iglesia donde solo importa "ver la cara del que está hablando" alcanza y sobra.</div>
+<div class="tip" style="margin-top:8px"><div class="ti">💡</div><div class="tt"><strong>Si el cliente puede invertir un poco:</strong> sugerile cambiar la cámara a una con salida HDMI. La diferencia visual es brutal y el VC4 ya lo soporta sin más cambios.</div></div>
+</div>
+</div></div>
+
+<!-- CASO 7: Pantalla vertical 2x5 P1.8 sin monitor -->
+<div class="acc"><div class="ah"><h3>📱 Caso 7 — Tótem vertical 2×5 P1.8 · sin monitor, solo pendrive</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="qbox">
+<p>"Tengo una pantalla LED P1.8 de 2 gabinetes de ancho por 5 de alto, gabinetes de 64×48. ¿Cómo conecto y subo imágenes al VC4 sin tener monitor, solo con un pendrive?"</p>
+</div>
+<div class="abox">
+<strong style="font-size:12px;color:var(--t)">Cálculo de la pantalla:</strong>
+<div class="calc">
+Cada gabinete: <strong>64 × 48 px</strong> (ancho × alto)<br><br>
+Píxeles ancho: 2 × 64 = <strong>128 px</strong><br>
+Píxeles alto:  5 × 48 = <strong>240 px</strong><br>
+Total: 128 × 240 = <strong>30.720 px</strong> ✅<br><br>
+Aspecto: <strong>1:1.875</strong> (vertical / tótem)<br>
+Tamaño físico aprox: <strong>23 × 43 cm</strong> (P1.8)<br>
+Uso del VC4: 30.720 / 2.6M = <strong>1.2%</strong> 🟢
+</div>
+<div class="tip"><div class="ti">📱</div><div class="tt"><strong>Es una pantalla vertical chica (formato tótem o cartelera de pasillo).</strong> Usa una mínima fracción del VC4 — entra cómoda en 1 solo puerto RJ45 y te sobra el 98% de la capacidad.</div></div>
+
+<strong style="font-size:12px;color:var(--t);display:block;margin-top:12px">🎨 Parte 1: Preparar las imágenes en la PC</strong>
+<div class="steps">
+<div class="step"><div><strong>Crear las imágenes a 128×240 píxeles exactos.</strong> En Photoshop: Archivo → Nuevo → 128 ancho × 240 alto, 72 dpi, RGB. En Canva o Figma elegí "Tamaño personalizado" y poné los mismos números. <strong>NO uses otra resolución</strong> o vas a tener bordes negros o estiramiento.</div></div>
+<div class="step"><div><strong>Diseñá vertical.</strong> Como es formato tótem, pensá en logos centrados, texto grande, poco contenido por pantalla. Una P1.8 a 23 cm de ancho se lee bien desde 2-3 metros, no más.</div></div>
+<div class="step"><div><strong>Exportar como JPG o PNG</strong> (los dos los soporta el VC4). PNG si tenés transparencias o texto fino, JPG si son fotos. Calidad alta.</div></div>
+<div class="step"><div><strong>Nombrá los archivos con números:</strong> 01.jpg, 02.jpg, 03.jpg... Así el VC4 los reproduce en orden alfabético cuando los pongas en loop.</div></div>
+</div>
+
+<strong style="font-size:12px;color:var(--t);display:block;margin-top:12px">💾 Parte 2: Preparar el pendrive</strong>
+<div class="steps">
+<div class="step"><div><strong>Insertar el pendrive en la PC.</strong> Cualquier pendrive sirve — con 1 GB sobra para imágenes.</div></div>
+<div class="step"><div><strong>Formatear a NTFS o FAT32.</strong> Clic derecho sobre el pendrive → Formatear → Sistema de archivos: NTFS (o FAT32 si es de menos de 32 GB) → Iniciar. <strong>NO uses exFAT</strong>, el VC4 no lo lee.</div></div>
+<div class="step"><div><strong>Copiar las imágenes a la raíz del pendrive.</strong> Sin carpetas, sin subcarpetas — todo suelto en la raíz para que el VC4 las encuentre fácil.</div></div>
+<div class="step"><div><strong>Expulsar el pendrive con seguridad</strong> (clic derecho → Expulsar). Si lo sacás "en caliente" podés corromper los archivos.</div></div>
+</div>
+
+<strong style="font-size:12px;color:var(--t);display:block;margin-top:12px">🔌 Parte 3: Conectar el VC4 a la pantalla</strong>
+<div class="steps">
+<div class="step"><div><strong>Conectar el cable de poder</strong> al VC4 y a la red eléctrica (100-240V).</div></div>
+<div class="step"><div><strong>Cable RJ45 (Cat5e o Cat6) desde el OUTPUT 1 del VC4 a la primera receiving card de la pantalla.</strong> Como la pantalla es chiquita (5 gabinetes en cadena), un solo puerto carga toda la guirnalda.</div></div>
+<div class="step"><div><strong>Cableado interno de la pantalla:</strong> los 10 gabinetes (2×5) se conectan en cascada gabinete a gabinete con cables RJ45 cortos. La salida de uno entra al siguiente. El orden lo define el Screen Configuration de las receiving cards.</div></div>
+<div class="step"><div><strong>Conectar la alimentación de la pantalla LED.</strong> Cada gabinete necesita su corriente — no te olvides de las fuentes de poder.</div></div>
+<div class="step"><div><strong>Encender el VC4</strong> con el switch frontal.</div></div>
+</div>
+<div class="warn" style="margin-top:10px">⚠️ <strong>Pre-requisito crítico:</strong> las receiving cards de la pantalla deben tener cargado el <strong>Screen Configuration</strong> con el mapeo correcto (2 ancho × 5 alto, en orientación vertical). Si la pantalla viene de fábrica ya configurada, listo. Si es nueva o virgen, alguien tiene que conectarla UNA VEZ con NovaLCT desde una PC vía USB Type-B del VC4 para hacer el mapeo. Después de eso, ya nunca más necesitás PC.</div>
+
+<strong style="font-size:12px;color:var(--t);display:block;margin-top:12px">🎮 Parte 4: Operar el VC4 sin monitor (todo desde la LCD frontal)</strong>
+<div class="steps">
+<div class="step"><div><strong>Insertá el pendrive</strong> en el puerto USB Type-A del frente del VC4.</div></div>
+<div class="step"><div><strong>Presioná el botón USB</strong> del frente. Su luz se pone fija azul indicando que el pendrive fue detectado y la fuente activa es USB.</div></div>
+<div class="step"><div><strong>Mirá la pantalla LCD del VC4.</strong> Te muestra que el pendrive está conectado (ícono de USB) y lista los archivos disponibles.</div></div>
+<div class="step"><div><strong>Girá el knob</strong> para navegar la lista de imágenes. Vas a ver 01.jpg, 02.jpg, etc.</div></div>
+<div class="step"><div><strong>Presioná el knob</strong> para seleccionar y reproducir el archivo. La imagen aparece en la pantalla LED.</div></div>
+<div class="step"><div><strong>Presioná SCALE.</strong> El VC4 ajusta la imagen a la pantalla. Como la diseñaste a 128×240 (el tamaño exacto de la pantalla), va a quedar pixel-perfect.</div></div>
+<div class="step"><div><strong>Activar Loop List:</strong> entrá al menú con el knob → buscá la opción de modo de reproducción → seleccioná <strong>Loop List</strong>. El ícono de loop aparece en la LCD. Ahora reproduce todas las imágenes en orden, infinito.</div></div>
+<div class="step"><div><strong>Ajustar el tiempo por imagen</strong> (si querés que cada foto dure más o menos): menú del knob → Image Display Time → girás para subir/bajar segundos.</div></div>
+<div class="step"><div><strong>Guardar como Preset 1.</strong> Menú → Save Scene → Preset 1. Así, si alguien apaga el VC4, al volver a encender carga solo la configuración correcta.</div></div>
+<div class="step"><div><strong>Bloquear el panel frontal</strong> (mantener presionado el knob unos segundos). Aparece el candado en la LCD. Listo: nadie puede tocar nada por accidente.</div></div>
+</div>
+
+<div class="tip" style="margin-top:12px"><div class="ti">🎯</div><div class="tt"><strong>Resumen del flujo:</strong> diseñás las imágenes a 128×240 en la PC → las copiás al pendrive en NTFS → las metés en el VC4 → botón USB → knob para elegir → SCALE → loop list → preset → candado. <strong>Nunca necesitaste un monitor conectado al VC4</strong>, todo se hizo desde la LCD frontal.</div></div>
+
+<div class="tip" style="margin-top:8px"><div class="ti">💡</div><div class="tt"><strong>Para actualizar el contenido en el futuro:</strong> sacás el pendrive, lo conectás a la PC, reemplazás las imágenes (manteniendo los nombres 01, 02, 03...), formato NTFS, expulsar seguro, lo volvés a meter en el VC4. El loop sigue corriendo con el contenido nuevo. Sin tocar configuración.</div></div>
+
+<div class="warn" style="margin-top:10px">⚠️ <strong>Errores típicos en este caso:</strong><br>• Imágenes de 1920×1080 en lugar de 128×240 → quedan estiradas o pequeñas.<br>• Pendrive en exFAT → el VC4 no lo lee.<br>• Archivos en una subcarpeta → puede que el VC4 no los encuentre.<br>• Olvidarse del Screen Configuration en las receiving cards → la pantalla queda en negro aunque el VC4 esté mandando señal.</div>
+</div>
+</div></div>
+
+</div>
+
+<!-- ENTRADAS -->
+<div class="sec" id="s-entradas">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">🔌</div><div><div class="ct">Entradas de video</div><div class="cs">5 fuentes + audio + USB</div></div></div>
+<p style="font-size:11px;color:var(--s);line-height:1.6;margin-bottom:8px">El VC4 acepta prácticamente cualquier fuente que te tires encima. Desde un DVI moderno hasta un viejo reproductor CVBS.</p>
+</div>
+
+<div class="acc op"><div class="ah"><h3>📺 DVI-D</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Cantidad</span><span class="rv">1</span></div>
+<div class="row"><span class="rl">Estándar</span><span class="rv">VESA</span></div>
+<div class="row"><span class="rl">Resolución máx</span><span class="rv">1920×1080@60Hz</span></div>
+<div class="row"><span class="rl">Custom resolution</span><span class="rv">✓ Sí</span></div>
+<div class="row"><span class="rl">HDCP</span><span class="rv">1.4</span></div>
+<div class="row"><span class="rl">EDID</span><span class="rv">1.4</span></div>
+<div class="row"><span class="rl">Señal entrelazada</span><span class="rv">✓ Soportada</span></div>
+<div class="row"><span class="rl">Color depth</span><span class="rv">8-bit RGB 4:4:4</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">💡</div><div class="tt">El DVI del VC4 es <strong>DVI-D</strong> (digital), no DVI-I. Si tu PC tiene DVI-I usá un cable DVI-D macho y funciona igual.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>🎬 HDMI 1.3</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Cantidad</span><span class="rv">1</span></div>
+<div class="row"><span class="rl">Versión</span><span class="rv">HDMI 1.3</span></div>
+<div class="row"><span class="rl">Resolución máx</span><span class="rv">1920×1080@60Hz</span></div>
+<div class="row"><span class="rl">HDCP</span><span class="rv">1.4</span></div>
+<div class="row"><span class="rl">EDID</span><span class="rv">1.4</span></div>
+<div class="row"><span class="rl">8-bit</span><span class="rv">RGB 4:4:4 · YCbCr 4:4:4 · 4:2:2</span></div>
+<div class="row"><span class="rl">10-bit</span><span class="rv">RGB 4:4:4 · YCbCr 4:4:4 · 4:2:2</span></div>
+<div class="row"><span class="rl">YCbCr 4:2:0</span><span class="rv" style="color:var(--r)">✗ No soportado</span></div>
+<div class="row"><span class="rl">12-bit</span><span class="rv" style="color:var(--r)">✗ No soportado</span></div>
+<div class="warn">⚠️ Es HDMI 1.3, no 2.0. Olvidate de 4K y de fuentes que mandan 4:2:0. Si tu PC manda 4K bajalo a 1080p en el panel de control de la GPU.</div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>🖥️ VGA</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Cantidad</span><span class="rv">1</span></div>
+<div class="row"><span class="rl">Resolución máx</span><span class="rv">1920×1080@60Hz</span></div>
+<div class="row"><span class="rl">Compatibilidad</span><span class="rv">Backward compatible</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">📼</div><div class="tt">VGA en 2026 sigue vivo en cartelería corporativa, lobbies de hoteles viejos y proyectores legacy. El VC4 te lo acepta sin drama.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>📼 CVBS</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Cantidad</span><span class="rv">1</span></div>
+<div class="row"><span class="rl">Estándar</span><span class="rv">PAL / NTSC</span></div>
+<div class="row"><span class="rl">Conector</span><span class="rv">BNC</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">🎥</div><div class="tt">Sí, todavía soporta CVBS analógico. Útil para cámaras de seguridad viejas, DVDs o cualquier fuente PAL/NTSC heredada.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>💾 USB Type-A (pendrive)</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Versión</span><span class="rv">USB 2.0</span></div>
+<div class="row"><span class="rl">Video máx</span><span class="rv">1080p @ 30 fps</span></div>
+<div class="row"><span class="rl">Sistema archivos</span><span class="rv">NTFS · FAT32 · FAT16</span></div>
+<div class="row"><span class="rl">exFAT</span><span class="rv" style="color:var(--r)">✗ NO soportado</span></div>
+<div class="row"><span class="rl">Imágenes</span><span class="rv">jpg · jpeg · png · bmp</span></div>
+<div class="warn">⚠️ Si tu pendrive es exFAT (típico en USB de 64 GB+) reformatealo a NTFS o FAT32 antes de usarlo. Sino el VC4 no lo lee.</div>
+<div style="margin-top:8px">
+<strong style="font-size:11px;color:var(--t)">Códecs de video soportados:</strong>
+<div style="margin-top:6px">
+<span class="chip cb">MPEG1/2</span><span class="chip cb">MPEG4</span><span class="chip cb">Sorenson H.263</span><span class="chip cb">H.263</span><span class="chip cb">H.264 (AVC1)</span><span class="chip cb">H.265 (HEVC)</span><span class="chip cb">RV30/40</span><span class="chip cb">DivX</span><span class="chip cb">Xvid</span>
+</div>
+</div>
+<div style="margin-top:8px">
+<strong style="font-size:11px;color:var(--t)">Códecs de audio soportados:</strong>
+<div style="margin-top:6px">
+<span class="chip cp">MPEG1/2 Layer I</span><span class="chip cp">Layer II</span><span class="chip cp">Layer III</span><span class="chip cp">AAC-LC</span><span class="chip cp">VORBIS</span><span class="chip cp">PCM</span><span class="chip cp">FLAC</span>
+</div>
+</div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>🔊 Audio analógico</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">Cantidad</span><span class="rv">2 conectores (IN + OUT)</span></div>
+<div class="row"><span class="rl">Tipo</span><span class="rv">Analógico</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">🎵</div><div class="tt">Audio independiente del video. Podés inyectar audio externo y mandarlo a un amplificador sin tocar la señal de video.</div></div>
+</div></div>
+</div>
+
+<!-- SALIDAS -->
+<div class="sec" id="s-salidas">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">📡</div><div><div class="ct">Salidas a la pantalla LED</div><div class="cs">4 puertos Gigabit · 2.6M px</div></div></div>
+<div class="row"><span class="rl">Puertos</span><span class="rv">4× RJ45 Gigabit</span></div>
+<div class="row"><span class="rl">Carga total máx</span><span class="rv">2.600.000 px</span></div>
+<div class="row"><span class="rl">Ancho máx</span><span class="rv">3840 px</span></div>
+<div class="row"><span class="rl">Alto máx</span><span class="rv">1920 px</span></div>
+<div class="row"><span class="rl">Conexión</span><span class="rv">A receiving cards</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#fef3c7">📐</div><div><div class="ct">¿Cuánto carga cada puerto?</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.6">Los 2.6M px se reparten entre los 4 puertos. <strong>Aproximadamente 650.000 px por puerto</strong> en el escenario ideal. La distribución real depende del mapeo del Screen Configuration en NovaLCT.</p>
+<div class="tip" style="margin-top:8px"><div class="ti">🧮</div><div class="tt"><strong>Ejemplo real:</strong> pantalla de 1920×1080 (2.07M px) entra cómoda en el VC4. Pantalla de 2560×1440 (3.68M px) ya se pasa — necesitás otro controlador.</div></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">🔄</div><div><div class="ct">Hot backup</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.6">Los puertos de salida se pueden configurar como <strong>backup en caliente</strong>. Si un puerto principal falla, el backup toma el control sin que la pantalla se vea negra.</p>
+<div class="tip" style="margin-top:8px"><div class="ti">🛡️</div><div class="tt">Para instalaciones críticas (lobby de banco, hospital, sala de control) configurá un puerto como backup del principal. La LCD del VC4 muestra el ícono cuando un puerto está en modo backup.</div></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#ede9fe">🎛️</div><div><div class="ct">Control e interfaces de servicio</div></div></div>
+<div class="row"><span class="rl">RS232 (RJ45)</span><span class="rv">Control central externo</span></div>
+<div class="row"><span class="rl">USB Type-B</span><span class="rv">PC para upgrade y debug</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">🔗</div><div class="tt"><strong>RS232:</strong> conectás el VC4 a un sistema Crestron / Extron / AMX y lo controlás desde el touch panel del cliente.</div></div>
+</div>
+</div>
+
+<!-- PANEL FRONTAL -->
+<div class="sec" id="s-panel">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">🎛️</div><div><div class="ct">Panel frontal del VC4</div><div class="cs">Un knob, un botón, 6 fuentes</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.7">Todo el sistema se opera con muy pocos elementos. La filosofía: nada de menús anidados ni 50 botones. Simple, directo, profesional.</p>
+</div>
+
+<div class="acc op"><div class="ah"><h3>① Power switch</h3><span class="ar">▼</span></div>
+<div class="ab"><p style="font-size:12px;color:var(--s);line-height:1.6">Switch físico ON/OFF del equipo. Enciende y apaga el dispositivo.</p></div></div>
+
+<div class="acc"><div class="ah"><h3>② Pantalla LCD de operación</h3><span class="ar">▼</span></div>
+<div class="ab"><p style="font-size:12px;color:var(--s);line-height:1.6">Muestra el estado actual del dispositivo y el menú de configuración. Ver pestaña <strong>📺 Pantalla LCD</strong> para el detalle de cada ícono.</p></div></div>
+
+<div class="acc"><div class="ah"><h3>③ Knob</h3><span class="ar">▼</span></div>
+<div class="ab">
+<p style="font-size:12px;color:var(--s);line-height:1.6">Selecciona menús, ajusta parámetros y confirma operaciones.</p>
+<div class="tip" style="margin-top:8px"><div class="ti">🎚️</div><div class="tt"><strong>Girar:</strong> navegar / cambiar valor. <strong>Presionar:</strong> entrar / confirmar. Es el corazón del VC4.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>④ ESC (back button)</h3><span class="ar">▼</span></div>
+<div class="ab"><p style="font-size:12px;color:var(--s);line-height:1.6">Sale del menú actual o cancela la operación en curso. Si te perdés en el menú, presionás ESC varias veces hasta volver al home.</p></div></div>
+
+<div class="acc"><div class="ah"><h3>⑤ SCALE</h3><span class="ar">▼</span></div>
+<div class="ab">
+<p style="font-size:12px;color:var(--s);line-height:1.6">Botón de acceso directo para zoom a pantalla completa.</p>
+<div class="tip" style="margin-top:8px"><div class="ti">⚡</div><div class="tt">Es el botón mágico. Apretás SCALE y la fuente actual se ajusta a toda la pantalla LED, sin importar la resolución de entrada.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>⑥ Botones de fuente de entrada</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="row"><span class="rl">HDMI</span><span class="rv">Fuente HDMI · ⏯ pausa USB</span></div>
+<div class="row"><span class="rl">DVI</span><span class="rv">Fuente DVI · ⏮ anterior USB</span></div>
+<div class="row"><span class="rl">VGA</span><span class="rv">Fuente VGA · ⏭ siguiente USB</span></div>
+<div class="row"><span class="rl">USB</span><span class="rv">Pendrive · ⏹ stop USB</span></div>
+<div class="row"><span class="rl">EXT</span><span class="rv">Tarjeta Android (opcional)</span></div>
+<div class="row"><span class="rl">CVBS</span><span class="rv">Fuente analógica</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">🎮</div><div class="tt"><strong>Truco multifunción:</strong> cuando estás reproduciendo desde USB, los botones HDMI/DVI/VGA/USB cambian de rol y se vuelven controles de reproducción (play/pausa, anterior, siguiente, stop).</div></div>
+</div></div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#fef3c7">💡</div><div><div class="ct">Estado de las luces de fuente</div></div></div>
+<div class="led-row"><div class="led on"></div><div><strong>Luz fija:</strong> hay señal y la fuente está en uso</div></div>
+<div class="led-row"><div class="led bl"></div><div><strong>Parpadea:</strong> sin señal pero la fuente está seleccionada</div></div>
+<div class="led-row"><div class="led off"></div><div><strong>Apagada:</strong> la fuente no está en uso</div></div>
+</div>
+</div>
+
+<!-- LCD -->
+<div class="sec" id="s-lcd">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">📺</div><div><div class="ct">Pantalla LCD — Íconos</div><div class="cs">Lo que ves en el display frontal</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.6">La LCD del VC4 muestra de un vistazo: fuente actual, resolución, tamaño de pantalla, brillo, estado de los puertos y modo de zoom.</p>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">🏠</div><div><div class="ct">Información principal</div></div></div>
+<div class="row"><span class="rl">🏠 Home</span><span class="rv">Logo interfaz principal</span></div>
+<div class="row"><span class="rl">🔒 Lock</span><span class="rv">Panel frontal bloqueado</span></div>
+<div class="row"><span class="rl">Input</span><span class="rv">Fuente + resolución</span></div>
+<div class="row"><span class="rl">Screen</span><span class="rv">Tamaño de pantalla</span></div>
+<div class="row"><span class="rl">☀ Brillo</span><span class="rv">0% negro · 100% máx</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#ede9fe">🔌</div><div><div class="ct">Estado de los 4 puertos RJ45</div></div></div>
+<div class="row"><span class="rl">Puerto sin LED</span><span class="rv">Sin pantalla conectada</span></div>
+<div class="row"><span class="rl">Puerto con LED</span><span class="rv">Pantalla conectada y activa</span></div>
+<div class="row"><span class="rl">Puerto en backup</span><span class="rv">Hot backup activo</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">👁️</div><div class="tt">Mirando la LCD ya sabés en 1 segundo si los 4 puertos están bien conectados. Sin abrir laptop, sin NovaLCT.</div></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#fef3c7">🔍</div><div><div class="ct">Modo de zoom activo</div></div></div>
+<div class="row"><span class="rl">⛶ Full screen</span><span class="rv">Zoom a pantalla completa</span></div>
+<div class="row"><span class="rl">1:1</span><span class="rv">Pixel-to-pixel</span></div>
+<div class="row"><span class="rl">▭ Custom</span><span class="rv">Zoom personalizado</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">💾</div><div><div class="ct">Estado USB</div></div></div>
+<div class="row"><span class="rl">USB no conectado</span><span class="rv">Pendrive ausente</span></div>
+<div class="row"><span class="rl">USB conectado</span><span class="rv">Pendrive listo</span></div>
+<div class="row"><span class="rl">↻ Loop 1</span><span class="rv">Loop de un solo archivo</span></div>
+<div class="row"><span class="rl">↻ Loop list</span><span class="rv">Reproduce lista en orden</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">💻</div><div><div class="ct">Conexión a PC (USB Type-B)</div></div></div>
+<div class="row"><span class="rl">Conectado</span><span class="rv">PC enlazada vía USB</span></div>
+<div class="row"><span class="rl">Desconectado</span><span class="rv">Sin PC</span></div>
+</div>
+</div>
+
+<!-- ZOOM -->
+<div class="sec" id="s-zoom">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">🔍</div><div><div class="ct">3 modos de zoom</div><div class="cs">Cómo encajar tu fuente en la pantalla LED</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.7">Tu PC manda 1920×1080 pero tu pantalla LED es 2400×1200 ¿Qué hacés? El VC4 te da 3 caminos.</p>
+</div>
+
+<div class="mode-grid">
+<div class="mode-card best">
+<div class="mode-name">FULL SCREEN</div>
+<div style="font-size:22px">⛶</div>
+<div class="mode-lbl">1 click · ajusta todo</div>
+</div>
+<div class="mode-card">
+<div class="mode-name">PIXEL-TO-PIXEL</div>
+<div style="font-size:22px">1:1</div>
+<div class="mode-lbl">Sin escalar · 100% nítido</div>
+</div>
+<div class="mode-card">
+<div class="mode-name">CUSTOM</div>
+<div style="font-size:22px">▭</div>
+<div class="mode-lbl">Vos definís el área</div>
+</div>
+</div>
+
+<div class="card" style="margin-top:12px">
+<div class="ch"><div class="ci" style="background:#d1fae5">⛶</div><div><div class="ct">Full Screen Zoom</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.6">El más usado. Apretás el botón <strong>SCALE</strong> del frente y la fuente se estira/encoge automáticamente para ocupar toda la pantalla LED. Distorsiona si la relación de aspecto no coincide.</p>
+<div class="tip" style="margin-top:8px"><div class="ti">⚡</div><div class="tt"><strong>Cuándo usarlo:</strong> publicidad en mall, cartelería, contenido genérico donde "que se vea grande" importa más que la fidelidad de píxel.</div></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">1:1</div><div><div class="ct">Pixel-to-Pixel</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.6">Cada píxel de la fuente se mapea a 1 píxel de la pantalla LED, sin escalar. Si tu fuente es más chica, queda con bordes negros. Si es más grande, se recorta.</p>
+<div class="tip" style="margin-top:8px"><div class="ti">🎯</div><div class="tt"><strong>Cuándo usarlo:</strong> para contenido crítico con tipografía fina, dashboards, control room. Cero pérdida de calidad.</div></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#ede9fe">▭</div><div><div class="ct">Custom Zoom</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.6">Configurás vos la posición y tamaño de la ventana de salida. Soporta ajuste de posición de ventana, tamaño y recorte de ventana.</p>
+<div class="tip" style="margin-top:8px"><div class="ti">🛠️</div><div class="tt"><strong>Cuándo usarlo:</strong> cuando querés mostrar solo una parte de la fuente (window crop), o ubicar la imagen en una zona específica de la pantalla LED.</div></div>
+</div>
+</div>
+
+<!-- USB -->
+<div class="sec" id="s-usb">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">💾</div><div><div class="ct">Reproducción desde USB</div><div class="cs">Cartelería sin PC</div></div></div>
+<p style="font-size:12px;color:var(--s);line-height:1.7">El VC4 puede mostrar contenido directo de un pendrive sin necesidad de computadora. Ideal para cartelería digital simple.</p>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">📋</div><div><div class="ct">Requisitos del pendrive</div></div></div>
+<div class="row"><span class="rl">Sistema archivos</span><span class="rv">NTFS · FAT32 · FAT16</span></div>
+<div class="row"><span class="rl">exFAT</span><span class="rv" style="color:var(--r)">✗ NO funciona</span></div>
+<div class="row"><span class="rl">USB</span><span class="rv">2.0 Type-A</span></div>
+<div class="row"><span class="rl">Video máx</span><span class="rv">1080p @ 30 fps</span></div>
+<div class="err">❌ Pendrives modernos de 64 GB+ vienen en exFAT por defecto. <strong>Reformatealos a NTFS</strong> antes de usarlos en el VC4 sino no los detecta.</div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#fef3c7">🎮</div><div><div class="ct">Cómo reproducir</div></div></div>
+<div class="row"><span class="rl">1. Insertar pendrive</span><span class="rv">USB frontal</span></div>
+<div class="row"><span class="rl">2. Seleccionar fuente</span><span class="rv">Botón USB</span></div>
+<div class="row"><span class="rl">3. Navegar archivos</span><span class="rv">Knob</span></div>
+<div class="row"><span class="rl">4. Play / pausa</span><span class="rv">Botón HDMI</span></div>
+<div class="row"><span class="rl">5. Anterior</span><span class="rv">Botón DVI</span></div>
+<div class="row"><span class="rl">6. Siguiente</span><span class="rv">Botón VGA</span></div>
+<div class="row"><span class="rl">7. Stop</span><span class="rv">Botón USB</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#ede9fe">🔁</div><div><div class="ct">Modos de loop</div></div></div>
+<div class="row"><span class="rl">Loop de un archivo</span><span class="rv">Repite el video actual</span></div>
+<div class="row"><span class="rl">Lista en orden</span><span class="rv">Reproduce todos en secuencia</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">📺</div><div class="tt"><strong>Cartelería 24/7:</strong> armás un pendrive con 5 videos publicitarios, ponés modo "lista en orden", el VC4 los reproduce eternamente sin PC ni mantenimiento.</div></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">🎬</div><div><div class="ct">Formatos soportados</div></div></div>
+<strong style="font-size:11px;color:var(--t)">Imágenes:</strong>
+<div style="margin-top:4px;margin-bottom:8px">
+<span class="chip cb">jpg</span><span class="chip cb">jpeg</span><span class="chip cb">png</span><span class="chip cb">bmp</span>
+</div>
+<strong style="font-size:11px;color:var(--t)">Video:</strong>
+<div style="margin-top:4px;margin-bottom:8px">
+<span class="chip cg">MPEG1/2</span><span class="chip cg">MPEG4</span><span class="chip cg">H.263</span><span class="chip cg">H.264</span><span class="chip cg">H.265</span><span class="chip cg">DivX</span><span class="chip cg">Xvid</span><span class="chip cg">RV30/40</span>
+</div>
+<strong style="font-size:11px;color:var(--t)">Audio:</strong>
+<div style="margin-top:4px">
+<span class="chip cp">MP1</span><span class="chip cp">MP2</span><span class="chip cp">MP3</span><span class="chip cp">AAC-LC</span><span class="chip cp">VORBIS</span><span class="chip cp">PCM</span><span class="chip cp">FLAC</span>
+</div>
+</div>
+</div>
+
+<!-- FIX -->
+<div class="sec" id="s-fix">
+<div class="card" style="border-color:var(--w)">
+<div class="ch"><div class="ci" style="background:#fef3c7">🔧</div><div><div class="ct">No funciona — diagnóstico</div><div class="cs">Los problemas más comunes</div></div></div>
+</div>
+
+<div class="acc op"><div class="ah"><h3>❌ La pantalla LED no muestra nada</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="tip"><div class="ti">1️⃣</div><div class="tt"><strong>¿La fuente está OK?</strong> Mirá los botones del frente: si la luz está fija = señal OK. Si parpadea = no hay señal.</div></div>
+<div class="tip"><div class="ti">2️⃣</div><div class="tt"><strong>¿El cable RJ45 está bien?</strong> Probá otro cable. Probá otro puerto del VC4. La LCD muestra cuáles puertos detectan pantalla.</div></div>
+<div class="tip"><div class="ti">3️⃣</div><div class="tt"><strong>¿El brillo está en 0%?</strong> Knob → Brightness. Subilo a 100%.</div></div>
+<div class="tip"><div class="ti">4️⃣</div><div class="tt"><strong>¿La pantalla está mapeada?</strong> Si las receiving cards no tienen Screen Configuration cargado, el VC4 manda señal pero la pantalla no sabe dónde poner cada píxel. Necesitás NovaLCT por USB Type-B.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>📺 La imagen está distorsionada</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="tip"><div class="ti">1️⃣</div><div class="tt"><strong>Probá Pixel-to-Pixel</strong> para descartar problema de escalado. Si en 1:1 se ve bien, el problema es el modo de zoom.</div></div>
+<div class="tip"><div class="ti">2️⃣</div><div class="tt"><strong>Aspect ratio:</strong> si tu fuente es 16:9 y la pantalla LED es 4:1, full screen va a estirar la imagen. Usá custom zoom.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>💾 No detecta el pendrive</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="err">❌ <strong>Causa #1 (90% de los casos):</strong> el pendrive es exFAT. El sistema de archivos USB soporta NTFS, FAT32 y FAT16, pero no exFAT. Reformatealo a NTFS.</div>
+<div class="tip"><div class="ti">2️⃣</div><div class="tt">Probá otro pendrive. Algunos USB 3.0 muy nuevos no son backwards-compatible con USB 2.0.</div></div>
+<div class="tip"><div class="ti">3️⃣</div><div class="tt">El video no debe pasar de 1080p@30. Si tu archivo es 4K o 60fps, no va a reproducir.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>🎬 HDMI de PC moderna no funciona</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="warn">⚠️ El VC4 es <strong>HDMI 1.3</strong>, no 2.0. Si tu GPU manda 4K, 60fps, HDR o YCbCr 4:2:0 → no va a funcionar.</div>
+<div class="tip"><div class="ti">🔧</div><div class="tt"><strong>Solución:</strong> en el panel de control de NVIDIA / AMD / Intel, forzá la salida a 1920×1080 @ 60Hz, RGB 4:4:4, 8-bit. Eso es lo que el VC4 espera.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>🔘 El panel frontal no responde</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="tip"><div class="ti">🔒</div><div class="tt">Mirá la LCD: si ves el ícono de candado, el panel está bloqueado. Mantené presionado el knob por unos segundos para desbloquear.</div></div>
+</div></div>
+
+<div class="acc"><div class="ah"><h3>🔇 No hay audio</h3><span class="ar">▼</span></div>
+<div class="ab">
+<div class="tip"><div class="ti">🎵</div><div class="tt">El audio del VC4 es <strong>independiente</strong> del video. Tenés que conectar el cable a la entrada AUDIO IN específica, no esperes audio embebido por DVI/VGA/CVBS (DVI y VGA no llevan audio).</div></div>
+<div class="tip"><div class="ti">📺</div><div class="tt">HDMI sí lleva audio, pero el VC4 lo enruta a la salida AUDIO OUT analógica. No va al puerto RJ45.</div></div>
+</div></div>
+</div>
+
+<!-- SPECS -->
+<div class="sec" id="s-specs">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">📋</div><div><div class="ct">Especificaciones técnicas</div><div class="cs">VC4 · Tabla completa</div></div></div>
+<div class="row"><span class="rl">Modelo</span><span class="rv">VC4</span></div>
+<div class="row"><span class="rl">Tipo</span><span class="rv">LED Video Controller</span></div>
+<div class="row"><span class="rl">Versión firmware</span><span class="rv">V1.1.4</span></div>
+<div class="row"><span class="rl">Carga máxima</span><span class="rv">2.600.000 px</span></div>
+<div class="row"><span class="rl">Ancho máx salida</span><span class="rv">3840 px</span></div>
+<div class="row"><span class="rl">Alto máx salida</span><span class="rv">1920 px</span></div>
+<div class="row"><span class="rl">Puertos salida</span><span class="rv">4× RJ45 Gigabit</span></div>
+<div class="row"><span class="rl">Presets / escenas</span><span class="rv">6</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">⚡</div><div><div class="ct">Eléctricas</div></div></div>
+<div class="row"><span class="rl">Alimentación</span><span class="rv">AC 100–240V · 50/60 Hz</span></div>
+<div class="row"><span class="rl">Consumo</span><span class="rv">25 W</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#ede9fe">🌡️</div><div><div class="ct">Ambiente operativo</div></div></div>
+<div class="row"><span class="rl">Temp. operación</span><span class="rv">-20°C a +60°C</span></div>
+<div class="row"><span class="rl">Humedad operación</span><span class="rv">20–90% RH sin cond.</span></div>
+<div class="row"><span class="rl">Humedad almacén</span><span class="rv">10–95% RH sin cond.</span></div>
+<div class="row"><span class="rl">Ruido @ 25°C</span><span class="rv">38 dB(A)</span></div>
+<div class="tip" style="margin-top:8px"><div class="ti">❄️</div><div class="tt"><strong>Rango de temperatura impresionante:</strong> -20°C a +60°C lo hace apto para outdoor en climas extremos (con gabinete IP adecuado).</div></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#fef3c7">📐</div><div><div class="ct">Físicas</div></div></div>
+<div class="row"><span class="rl">Dimensiones</span><span class="rv">482.6 × 250 × 50 mm</span></div>
+<div class="row"><span class="rl">Rack</span><span class="rv">1U estándar 19"</span></div>
+<div class="row"><span class="rl">Peso neto</span><span class="rv">2.82 kg</span></div>
+<div class="row"><span class="rl">Peso total</span><span class="rv">5.1 kg</span></div>
+<div class="row"><span class="rl">Caja</span><span class="rv">565 × 328 × 88 mm</span></div>
+<div class="row"><span class="rl">Caja exterior</span><span class="rv">585 × 353 × 113 mm</span></div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#dbeafe">🎨</div><div><div class="ct">Color depth por entrada</div></div></div>
+<div class="tbl">
+<div class="tbl-h" style="grid-template-columns:1fr 1fr 1fr"><span>Entrada</span><span>Bits</span><span>Resolución</span></div>
+<div class="tbl-r" style="grid-template-columns:1fr 1fr 1fr"><span>HDMI 1.3</span><span>8-bit RGB</span><span style="color:var(--a3);font-weight:700">1080@60</span></div>
+<div class="tbl-r" style="grid-template-columns:1fr 1fr 1fr"><span>HDMI 1.3</span><span>10-bit RGB</span><span style="color:var(--a3);font-weight:700">1080@60</span></div>
+<div class="tbl-r" style="grid-template-columns:1fr 1fr 1fr"><span>HDMI 1.3</span><span>12-bit</span><span style="color:var(--r)">No</span></div>
+<div class="tbl-r" style="grid-template-columns:1fr 1fr 1fr"><span>DVI</span><span>8-bit RGB</span><span style="color:var(--a3);font-weight:700">1080@60</span></div>
+<div class="tbl-r" style="grid-template-columns:1fr 1fr 1fr"><span>VGA</span><span>—</span><span style="color:var(--a3);font-weight:700">1080@60</span></div>
+<div class="tbl-r" style="grid-template-columns:1fr 1fr 1fr"><span>CVBS</span><span>—</span><span style="color:var(--a3);font-weight:700">PAL/NTSC</span></div>
+</div>
+</div>
+
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">📦</div><div><div class="ct">Accesorios incluidos</div></div></div>
+<div style="display:flex;flex-wrap:wrap;gap:5px">
+<span class="chip cg">✓ 1× Cable poder</span>
+<span class="chip cg">✓ 1× Cable USB</span>
+<span class="chip cg">✓ 1× Cable DVI</span>
+<span class="chip cg">✓ 1× Cable HDMI</span>
+</div>
+</div>
+</div>
+
+<!-- BUSCAR -->
+<div class="sec" id="s-buscar">
+<div class="sbox"><input type="text" id="si" placeholder="Buscar: HDMI, USB, exFAT, scale, brillo..."></div>
+<div id="sres"><div style="text-align:center;color:var(--s);padding:40px;font-size:13px">🔎 Escribí algo para buscar</div></div>
+</div>
+
+<!-- QUIZ -->
+<div class="sec" id="s-quiz">
+<div class="card">
+<div class="ch"><div class="ci" style="background:#d1fae5">🎯</div><div><div class="ct">Quiz VC4 Expert</div><div class="cs" id="qsub">Pregunta 1 de 8</div></div></div>
+<div class="qbar"><div class="qbf" id="qbar" style="width:0%"></div></div>
+<div id="qcont"></div>
+</div>
+</div>
+
+<footer>Desarrollado por <strong>Juanseled</strong> · NovaStar VC4 v1.1.4 · La guía que todo técnico LED necesita</footer>
+
+<script>
+// NAV
+document.querySelectorAll('.nb').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.nb').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.sec').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.getElementById('s-'+b.dataset.t).classList.add('on');
+    window.scrollTo(0,0);
+  };
+});
+
+// ACCORDIONS
+document.querySelectorAll('.ah').forEach(h=>{
+  h.onclick=()=>h.parentElement.classList.toggle('op');
+});
+
+// SEARCH
+const sdb=[
+  {t:'HDMI 1.3',c:'1× HDMI 1.3, máx 1920×1080@60. Soporta HDCP 1.4 y EDID 1.4. NO soporta 4K, NO YCbCr 4:2:0, NO 12-bit.',s:'entradas'},
+  {t:'DVI-D',c:'1× DVI-D, VESA estándar. Máx 1920×1080@60. HDCP 1.4. Soporta señal entrelazada y resolución custom.',s:'entradas'},
+  {t:'VGA',c:'1× VGA analógico. Máx 1920×1080@60. Backward compatible con resoluciones más bajas.',s:'entradas'},
+  {t:'CVBS',c:'1× CVBS analógico (BNC). PAL y NTSC. Para fuentes legacy como cámaras y DVDs viejos.',s:'entradas'},
+  {t:'USB pendrive',c:'USB 2.0 Type-A. Solo NTFS, FAT32 y FAT16. NO soporta exFAT. Video máx 1080p@30fps.',s:'usb'},
+  {t:'exFAT',c:'NO soportado por el VC4. Reformatea el pendrive a NTFS o FAT32 antes de usarlo.',s:'fix'},
+  {t:'Salidas RJ45',c:'4× puertos Gigabit Ethernet. Carga total máxima 2.600.000 píxeles. Ancho 3840, alto 1920.',s:'salidas'},
+  {t:'Carga máxima',c:'2.6 millones de píxeles distribuidos en los 4 puertos RJ45. Ancho máx 3840, alto máx 1920.',s:'salidas'},
+  {t:'SCALE / Zoom',c:'Botón frontal de acceso directo a zoom full screen. Tres modos: full screen, pixel-to-pixel y custom.',s:'zoom'},
+  {t:'Pixel-to-pixel',c:'Modo 1:1 — cada píxel de la fuente se mapea a 1 píxel de la pantalla LED. Sin escalar.',s:'zoom'},
+  {t:'Custom zoom',c:'Definís manualmente posición y tamaño de la ventana de salida. Soporta window crop.',s:'zoom'},
+  {t:'Knob',c:'Selecciona menús, ajusta parámetros y confirma. Es el corazón del control del VC4.',s:'panel'},
+  {t:'ESC',c:'Botón back — sale del menú actual o cancela la operación.',s:'panel'},
+  {t:'RS232',c:'Conexión RJ45 para central control externo (Crestron, Extron, AMX).',s:'salidas'},
+  {t:'USB Type-B',c:'Conexión a PC para upgrade de firmware y debugging del equipo.',s:'salidas'},
+  {t:'Presets',c:'6 escenas guardables como template. Se cargan rápido desde el menú.',s:'inicio'},
+  {t:'Brillo',c:'Ajustable de 0% (negro) a 100% (máximo). Se accede desde el menú con el knob.',s:'lcd'},
+  {t:'Hot backup',c:'Los puertos RJ45 pueden configurarse como backup en caliente. Si el principal falla, el backup toma el control.',s:'salidas'},
+  {t:'Audio',c:'2 conectores analógicos: AUDIO IN y AUDIO OUT. Audio independiente del video.',s:'entradas'},
+  {t:'Consumo',c:'25 W. Alimentación AC 100-240V, 50/60 Hz.',s:'specs'},
+  {t:'Temperatura',c:'Operación -20°C a +60°C. Humedad 20-90% RH sin condensación.',s:'specs'},
+  {t:'Dimensiones',c:'482.6 × 250 × 50 mm. Equipo 1U para rack 19". Peso neto 2.82 kg.',s:'specs'},
+  {t:'Ruido',c:'38 dB(A) a 25°C. Equipo silencioso, apto para sala de control.',s:'specs'},
+  {t:'EXT',c:'Botón de fuente para tarjeta Android opcional. Para signage embebido sin PC externa.',s:'panel'},
+  {t:'Códecs video',c:'MPEG1/2, MPEG4, H.263, H.264 (AVC1), H.265 (HEVC), DivX, Xvid, RV30/40, Sorenson H.263.',s:'usb'},
+  {t:'Códecs audio',c:'MPEG1/2 Layer I/II/III, AAC-LC, VORBIS, PCM, FLAC.',s:'usb'},
+  {t:'Imágenes USB',c:'Formatos soportados: jpg, jpeg, png y bmp.',s:'usb'},
+  {t:'Bloqueo panel',c:'El panel frontal se puede bloquear. La LCD muestra el ícono de candado cuando está bloqueado.',s:'panel'},
+  {t:'Caso P1.8 con pendrive',c:'Pantalla pitch 1.8 con gabinetes 64×48. Ver Caso 1 en la pestaña Casos reales — formato pendrive a NTFS, contenido al tamaño exacto, scale + loop list.',s:'casos'},
+  {t:'Cálculo de píxeles',c:'Para saber si una pantalla entra en el VC4: gabinetes_ancho × pixeles_gabinete_ancho × gabinetes_alto × pixeles_gabinete_alto. Tope: 2.6M total, 3840 ancho, 1920 alto.',s:'casos'},
+  {t:'Cartelería sin PC',c:'Caso 5 — pendrive FAT32, 5 videos H.264 numerados, loop list activado, panel bloqueado. Cero mantenimiento.',s:'casos'},
+  {t:'Cámara CVBS RCA',c:'Caso 6 — adaptador RCA hembra a BNC macho, botón CVBS, scale. Detecta PAL/NTSC automático.',s:'casos'},
+  {t:'Hot backup banco',c:'Caso 4 — configurar Puerto 2 como backup del Puerto 1, recorridos físicos distintos, guardar como preset.',s:'casos'},
+  {t:'Notebook HDMI no anda',c:'Caso 3 — forzar 1920×1080 60Hz RGB 4:4:4 8-bit en panel de control de la GPU, desactivar HDR. Si sigue sin andar, probar DVI.',s:'casos'},
+  {t:'Tótem vertical 2x5',c:'Caso 7 — pantalla vertical P1.8 de 2×5 gabinetes 64×48 = 128×240 px. Diseñar imágenes a esa resolución exacta, pendrive NTFS, USB, scale, loop list. Todo sin monitor.',s:'casos'},
+  {t:'Imágenes pendrive sin monitor',c:'Caso 7 — flujo completo para subir imágenes al VC4 solo con pendrive y operar todo desde la LCD frontal.',s:'casos'}
+];
+const si=document.getElementById('si'),sres=document.getElementById('sres');
+si.oninput=()=>{
+  const q=si.value.toLowerCase().trim();
+  if(!q){sres.innerHTML='<div style="text-align:center;color:var(--s);padding:40px;font-size:13px">🔎 Escribí algo para buscar</div>';return}
+  const r=sdb.filter(x=>x.t.toLowerCase().includes(q)||x.c.toLowerCase().includes(q));
+  if(!r.length){sres.innerHTML='<div style="text-align:center;color:var(--s);padding:40px;font-size:13px">😕 Sin resultados para "'+q+'"</div>';return}
+  sres.innerHTML=r.map(x=>'<div class="sr"><h4>'+x.t+'</h4><p>'+x.c+'</p></div>').join('');
+};
+
+// QUIZ
+const qz=[
+  {q:'¿Cuál es la carga máxima en píxeles del VC4?',o:['1.300.000 px','2.600.000 px','3.900.000 px','5.200.000 px'],a:1,e:'El VC4 maneja hasta 2.6 millones de píxeles distribuidos en sus 4 puertos RJ45 Gigabit.'},
+  {q:'¿Qué versión de HDMI tiene el VC4?',o:['HDMI 1.3','HDMI 1.4','HDMI 2.0','HDMI 2.1'],a:0,e:'Es HDMI 1.3 — máximo 1920×1080@60Hz. No soporta 4K ni YCbCr 4:2:0.'},
+  {q:'¿Qué sistema de archivos USB NO soporta el VC4?',o:['NTFS','FAT32','FAT16','exFAT'],a:3,e:'exFAT no está soportado. Si tu pendrive es exFAT, reformatealo a NTFS o FAT32.'},
+  {q:'¿Cuántos presets / escenas se pueden guardar?',o:['4','6','10','16'],a:1,e:'El VC4 permite guardar 6 escenas como templates, recuperables con un par de clicks del knob.'},
+  {q:'¿Qué hace el botón SCALE?',o:['Reinicia el equipo','Bloquea el panel','Aplica zoom full screen','Cambia el brillo'],a:2,e:'SCALE es el acceso directo al modo full screen zoom: ajusta automáticamente la fuente a toda la pantalla LED.'},
+  {q:'¿Cuál es la temperatura mínima de operación?',o:['0°C','-10°C','-20°C','-40°C'],a:2,e:'-20°C. El VC4 opera entre -20°C y +60°C, lo que lo hace apto para climas extremos.'},
+  {q:'¿Cuántos puertos RJ45 de salida tiene?',o:['2','4','8','16'],a:1,e:'4 puertos Gigabit Ethernet hacia las receiving cards.'},
+  {q:'¿Cuál es el consumo del VC4?',o:['15 W','25 W','50 W','82 W'],a:1,e:'25 W de consumo. Equipo eficiente para instalación fija 24/7.'}
+];
+let qi=0,qok=0;
+function rq(){
+  const q=qz[qi];
+  document.getElementById('qsub').textContent='Pregunta '+(qi+1)+' de '+qz.length;
+  document.getElementById('qbar').style.width=((qi)/qz.length*100)+'%';
+  document.getElementById('qcont').innerHTML='<p style="font-size:13px;font-weight:700;margin-bottom:14px;line-height:1.5">'+q.q+'</p>'+
+    q.o.map((o,i)=>'<button class="qo" data-i="'+i+'">'+String.fromCharCode(65+i)+'. '+o+'</button>').join('')+
+    '<div class="qfb" id="qfb">'+q.e+'</div>';
+  document.querySelectorAll('#qcont .qo').forEach(b=>{
+    b.onclick=()=>{
+      const i=parseInt(b.dataset.i),correct=q.a;
+      document.querySelectorAll('#qcont .qo').forEach(x=>x.disabled=true);
+      if(i===correct){b.classList.add('ok');qok++}
+      else{b.classList.add('no');document.querySelectorAll('#qcont .qo')[correct].classList.add('ok')}
+      document.getElementById('qfb').classList.add('show');
+      const nx=document.createElement('button');
+      nx.style.cssText='width:100%;margin-top:10px;padding:11px;background:var(--a3);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit';
+      nx.textContent=qi<qz.length-1?'Siguiente →':'Ver resultado 🏆';
+      nx.onclick=()=>{qi++;if(qi<qz.length)rq();else fq()};
+      document.getElementById('qcont').appendChild(nx);
+    };
+  });
+}
+function fq(){
+  document.getElementById('qbar').style.width='100%';
+  document.getElementById('qsub').textContent='Resultado final';
+  const pct=Math.round(qok/qz.length*100);
+  let msg='';
+  if(pct===100)msg='🏆 ¡Perfecto! Sos VC4 Expert.';
+  else if(pct>=75)msg='🥇 Muy bien — dominás el VC4.';
+  else if(pct>=50)msg='🥈 Aprobado — te falta poco.';
+  else msg='📚 A repasar — volvé a la guía.';
+  document.getElementById('qcont').innerHTML='<div style="text-align:center;padding:20px"><div style="font-size:48px;font-weight:900;color:var(--a)">'+qok+'/'+qz.length+'</div><div style="font-size:14px;color:var(--s);margin:10px 0">'+msg+'</div><button class="qo" style="margin-top:10px" onclick="qi=0;qok=0;rq()">🔄 Volver a empezar</button></div>';
+}
+rq();
+</script>
+</body>
+</html>
